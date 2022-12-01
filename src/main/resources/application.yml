@@ -1,1 +1,5 @@
 
+configuration:
+  server:
+    host: localhost
+    port: 9091
