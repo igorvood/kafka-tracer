@@ -11,9 +11,13 @@ class Req(restTemplateBuilder: RestTemplateBuilder):AbstractRestRequest(restTemp
 
     fun arrowsByTopic(){
         val message = restTemplate.getForObject(
-            fullUrl("arrows/byTopic/dev_ivr__uasp_realtime__input_converter__mdm_cross_link__uaspdto"),
+            fullUrl("arrows/byTopic/dev_ivr__uasp_realtime__mdm_enrichment__for_additional_enrichment__uaspdto"),
             Array<JsonArrow>::class.java
-        )!!.toSet()
+        )!!
+            .map { it.arrow() }
+            .toSet()
+
+
         println(message)
 
 
