@@ -2,3 +2,16 @@ configuration:
   server:
     host: localhost
     port: 9091
+spring:
+  profiles:
+    active: local
+  #    active: stand
+  kafka:
+    consumer:
+      group-id: demo-group-id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    security:
+      protocol: "PLAINTEXT"
+    bootstrap-servers: localhost:29092,localhost:39092,localhost:49092
