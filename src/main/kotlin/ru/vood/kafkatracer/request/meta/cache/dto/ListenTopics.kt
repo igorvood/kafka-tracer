@@ -1,4 +1,4 @@
-package ru.vood.kafkatracer.appProps
+package ru.vood.kafkatracer.request.meta.cache.dto
 
 import ru.vood.kafkatracer.request.meta.dto.TopicJson
 

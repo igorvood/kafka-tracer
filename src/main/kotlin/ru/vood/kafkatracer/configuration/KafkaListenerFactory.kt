@@ -8,13 +8,15 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.ContainerProperties
 import org.springframework.kafka.listener.KafkaMessageListenerContainer
 import org.springframework.stereotype.Service
+import ru.vood.kafkatracer.request.meta.cache.KafkaMessageListener
+import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 
 @Service
-class KafkaListenerFactory(val kafkaProperties: KafkaProperties) {
+class KafkaListenerFactory(private val kafkaProperties: KafkaProperties) {
 
-    fun messageListenerContainer(topic: String): KafkaMessageListenerContainer<String, String> {
+    fun messageListenerContainer(topic: String, messageKafka: MutableMap<String, KafkaData>): KafkaMessageListenerContainer<String, String> {
         val containerProperties = ContainerProperties(topic)
-        containerProperties.messageListener = MyMessageListener()
+        containerProperties.messageListener = KafkaMessageListener(topic, messageKafka)
         val consumerFactory: ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties())
         val listenerContainer = KafkaMessageListenerContainer(consumerFactory, containerProperties)
         listenerContainer.isAutoStartup = false
