@@ -20,8 +20,12 @@ class KafkaListenerFactory(private val kafkaProperties: KafkaProperties) {
         val consumerFactory: ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties())
         val listenerContainer = KafkaMessageListenerContainer(consumerFactory, containerProperties)
         listenerContainer.isAutoStartup = false
+
         // bean name is the prefix of kafka consumer thread name
         listenerContainer.setBeanName("kafka-message-listener")
+
+        listenerContainer.start()
+
         return listenerContainer
     }
 

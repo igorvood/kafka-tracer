@@ -22,7 +22,7 @@ class KafkaMessageListener(
 
         val kafkaData = KafkaData(key, headers, timestamp, value, pip)
 
-        logger.info("""$topic last msg ${Date(timestamp)}""")
+        logger.info("""last msg ${Date(timestamp)} topic $topic""")
 
         messageKafka[topic] = kafkaData
     }
