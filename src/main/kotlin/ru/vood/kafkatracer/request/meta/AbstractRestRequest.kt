@@ -9,7 +9,7 @@ abstract class AbstractRestRequest(
     restTemplateBuilder: RestTemplateBuilder
 ) {
 
-    protected lateinit var cfgServerUrl: ConfigurationServerUrl
+    private lateinit var cfgServerUrl: ConfigurationServerUrl
 
     protected val restTemplate: RestTemplate = restTemplateBuilder.build()
 

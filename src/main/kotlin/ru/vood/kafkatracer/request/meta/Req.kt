@@ -11,11 +11,11 @@ import ru.vood.kafkatracer.request.meta.dto.TraceArrow
 class Req(restTemplateBuilder: RestTemplateBuilder):AbstractRestRequest(restTemplateBuilder) {
 
 
-    fun arrowsByTopic(topic: String): Set<TraceArrow<GraphNodeJson, GraphNodeJson>> {
+    fun arrowsByTopic(groupId: String): Set<TraceArrow<GraphNodeJson, GraphNodeJson>> {
 
 
         return restTemplate.getForObject(
-            fullUrl("arrows/byTopic/$topic"),
+            fullUrl("arrows/byGroup/$groupId"),
             Array<JsonArrow>::class.java
         )!!
             .map { it.arrow() }
