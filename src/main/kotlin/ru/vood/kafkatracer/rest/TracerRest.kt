@@ -25,9 +25,8 @@ class TracerRest(
     fun arrowsByGroup(@PathVariable groupId: String): JsGraph {
 
         val cache = userCache.cache
-        logger.info("========================"+cache.asMap().keys+"===============================")
-
         val userRequestListen = cache[RequestGraphDto(groupId)]
+        logger.info("========================"+cache.asMap().keys+"==============================="+userRequestListen.messageKafka)
         val traceArrows = userRequestListen.listenTopics.traceArrows
         val messageKafka = userRequestListen.messageKafka
 

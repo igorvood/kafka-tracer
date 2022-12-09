@@ -9,7 +9,8 @@ import java.util.*
 
 class KafkaMessageListener(
     private val topic: String,
-    private val messageKafka: MutableMap<String, KafkaData>
+//    private val messageKafka: MutableMap<String, KafkaData>,
+    private val messageApplyFun: (KafkaData)->Unit
 ) : MessageListener<String, String> {
     private val logger: Logger = LoggerFactory.getLogger(KafkaMessageListener::class.java)
 
@@ -22,8 +23,8 @@ class KafkaMessageListener(
 
         val kafkaData = KafkaData(key, headers, timestamp, value, pip)
 
-        logger.info("""last msg ${Date(timestamp)} topic $topic""")
-
-        messageKafka[topic] = kafkaData
+//        logger.info("""last msg ${Date(timestamp)} topic $topic""")
+        messageApplyFun(kafkaData)
+//        messageKafka[topic] = kafkaData
     }
 }

@@ -11,6 +11,7 @@ import ru.vood.kafkatracer.request.meta.Req
 import ru.vood.kafkatracer.request.meta.cache.dto.*
 import ru.vood.kafkatracer.request.meta.dto.FlinkSrvJson
 import ru.vood.kafkatracer.request.meta.dto.TopicJson
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @Service
@@ -27,8 +28,11 @@ class UserCache(
 
             val messageKafka = mutableMapOf<String, KafkaData>()
 
-            val topicListeners = requestGraph.topics.associateWith {
-                kafkaListenerFactory.messageListenerContainer(it.name, messageKafka)
+            val topicListeners = requestGraph.topics.associateWith { topic ->
+                kafkaListenerFactory.messageListenerContainer(topic.name) { km -> val prev =
+                    messageKafka.put(topic.name, km)
+                    logger.info("""last msg ${Date(km.timestamp)} topic ${topic.name}, prev msg ${prev?.timestamp}""")
+                }
             }
 
             return UserRequestListen(requestGraph, topicListeners, messageKafka)

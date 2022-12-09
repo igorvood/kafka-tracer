@@ -15,9 +15,9 @@ import java.util.UUID
 @Service
 class KafkaListenerFactory(private val kafkaProperties: KafkaProperties) {
 
-    fun messageListenerContainer(topic: String, messageKafka: MutableMap<String, KafkaData>): KafkaMessageListenerContainer<String, String> {
+    fun messageListenerContainer(topic: String, messageApplyFun: (KafkaData)->Unit): KafkaMessageListenerContainer<String, String> {
         val containerProperties = ContainerProperties(topic)
-        containerProperties.messageListener = KafkaMessageListener(topic, messageKafka)
+        containerProperties.messageListener = KafkaMessageListener(topic, messageApplyFun)
         val consumerFactory: ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties())
         val listenerContainer = KafkaMessageListenerContainer(consumerFactory, containerProperties)
         listenerContainer.isAutoStartup = false
