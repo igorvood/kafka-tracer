@@ -2,8 +2,6 @@ package ru.vood.kafkatracer.test
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Service
 import ru.vood.kafkatracer.request.meta.cache.UserCache
 import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
 import java.util.Date
@@ -14,7 +12,7 @@ class SchedulerTest(val userCache : UserCache) {
 //    @Scheduled(fixedDelay = 10000)
     fun sd(){
     val topicWithLastDate =
-        userCache.userCache[RequestGraphDto("dev_ivr__uasp_realtime__mdm_enrichment__for_additional_enrichment__uaspdto")]
+        userCache.cache[RequestGraphDto("dev_ivr__uasp_realtime__mdm_enrichment__for_additional_enrichment__uaspdto")]
             .messageKafka
             .map { it.key to Date(it.value.timestamp) }
             .toMap()

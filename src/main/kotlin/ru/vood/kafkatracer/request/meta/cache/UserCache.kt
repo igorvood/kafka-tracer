@@ -42,7 +42,7 @@ class UserCache(
         }
     }
 
-    val userCache = CacheBuilder
+    val cache = CacheBuilder
         .newBuilder()
         .expireAfterWrite(180, TimeUnit.SECONDS)
 //        .expireAfterAccess(30, TimeUnit.SECONDS)

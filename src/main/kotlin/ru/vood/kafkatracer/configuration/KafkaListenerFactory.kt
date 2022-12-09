@@ -10,6 +10,7 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer
 import org.springframework.stereotype.Service
 import ru.vood.kafkatracer.request.meta.cache.KafkaMessageListener
 import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
+import java.util.UUID
 
 @Service
 class KafkaListenerFactory(private val kafkaProperties: KafkaProperties) {
@@ -32,10 +33,12 @@ class KafkaListenerFactory(private val kafkaProperties: KafkaProperties) {
 
     private fun consumerProperties(): Map<String, Any> {
         val props: MutableMap<String, Any> = HashMap()
+        kafkaProperties.buildConsumerProperties()
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaProperties.bootstrapServers.joinToString(",")
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
-        props[ConsumerConfig.GROUP_ID_CONFIG] = "test"
-        return props
+//        props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
+        props[ConsumerConfig.GROUP_ID_CONFIG] = UUID.randomUUID()
+        return kafkaProperties.buildConsumerProperties()
     }
 }

@@ -19,7 +19,7 @@ class TracerRest(
     @GetMapping("/arrows/byGroup/{groupId}")
     fun arrowsByGroup(@PathVariable groupId: String): JsGraph {
 
-        val cache = userCache.userCache
+        val cache = userCache.cache
         println("========================"+cache.asMap().keys+"===============================")
         val userRequestListen = cache[RequestGraphDto(groupId)]
         val traceArrows = userRequestListen.listenTopics.traceArrows

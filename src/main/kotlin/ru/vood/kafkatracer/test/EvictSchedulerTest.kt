@@ -3,7 +3,6 @@ package ru.vood.kafkatracer.test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Service
 import ru.vood.kafkatracer.request.meta.cache.UserCache
 
 //@Service
@@ -13,13 +12,13 @@ class EvictSchedulerTest(val userCache : UserCache) {
     fun sd(){
     val joinToString =
         userCache
-            .userCache
+            .cache
             .asMap()
             .flatMap { it.value.topicListeners.values }
             .forEach { it.stop() }
 
         userCache
-            .userCache.invalidateAll()
+            .cache.invalidateAll()
 
     }
 
