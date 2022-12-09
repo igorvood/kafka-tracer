@@ -1,9 +1,12 @@
 package ru.vood.kafkatracer.rest
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
+import ru.vood.kafkatracer.request.meta.cache.KafkaMessageListener
 import ru.vood.kafkatracer.request.meta.cache.UserCache
 import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
 import ru.vood.kafkatracer.request.meta.dto.*
@@ -15,12 +18,15 @@ class TracerRest(
     val userCache: UserCache
 ) {
 
+
+    private val logger: Logger = LoggerFactory.getLogger(TracerRest::class.java)
     //    @Operation(summary = "Получить связи для трекинга", tags = ["Связи"])
     @GetMapping("/arrows/byGroup/{groupId}")
     fun arrowsByGroup(@PathVariable groupId: String): JsGraph {
 
         val cache = userCache.cache
-        println("========================"+cache.asMap().keys+"===============================")
+        logger.info("========================"+cache.asMap().keys+"===============================")
+
         val userRequestListen = cache[RequestGraphDto(groupId)]
         val traceArrows = userRequestListen.listenTopics.traceArrows
         val messageKafka = userRequestListen.messageKafka

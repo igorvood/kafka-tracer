@@ -32,13 +32,7 @@ class KafkaListenerFactory(private val kafkaProperties: KafkaProperties) {
 
 
     private fun consumerProperties(): Map<String, Any> {
-        val props: MutableMap<String, Any> = HashMap()
-        kafkaProperties.buildConsumerProperties()
-        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaProperties.bootstrapServers.joinToString(",")
-        props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
-        props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
-//        props[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG] = "earliest"
-        props[ConsumerConfig.GROUP_ID_CONFIG] = UUID.randomUUID()
-        return kafkaProperties.buildConsumerProperties()
+        val buildConsumerProperties = kafkaProperties.buildConsumerProperties()
+        return buildConsumerProperties
     }
 }

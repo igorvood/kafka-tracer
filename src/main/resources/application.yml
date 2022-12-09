@@ -15,3 +15,10 @@ spring:
     security:
       protocol: "PLAINTEXT"
     bootstrap-servers: localhost:29092,localhost:39092,localhost:49092
+
+logging:
+  level:
+    org:
+      apache:
+        kafka: off
+    ru: info
