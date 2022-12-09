@@ -11,7 +11,8 @@ import ru.vood.kafkatracer.request.meta.dto.TopicJson
 class UserCacheLoader(val req: Req) : CacheLoader<String, ListenTopics>() {
 
     override fun load(key: String): ListenTopics {
-        val toSet = req.arrowsByTopic(key)
+        val arrowsByTopic = req.arrowsByTopic(key)
+        val toSet = arrowsByTopic
             .map {
                  when (val to = it.to) {
                     is TopicJson -> to
@@ -24,6 +25,6 @@ class UserCacheLoader(val req: Req) : CacheLoader<String, ListenTopics>() {
                 }
             }.toSet()
 
-        return ListenTopics(toSet)
+        return ListenTopics(toSet, arrowsByTopic)
     }
 }

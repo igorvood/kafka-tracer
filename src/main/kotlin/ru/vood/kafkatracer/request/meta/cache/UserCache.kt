@@ -54,7 +54,7 @@ class UserCache(
 
         val traceArrows = req.arrowsByTopic(requestGraphDto.groupId)
 
-        val arrows = traceArrows.map {
+        val topics = traceArrows.map {
             val graphNodeJson = when (val to = it.to) {
                 is TopicJson -> to
                 is FlinkSrvJson -> {
@@ -68,7 +68,7 @@ class UserCache(
             graphNodeJson
         }.toSet()
 
-        return ListenTopics(arrows)
+        return ListenTopics(topics, traceArrows)
     }
 
 
