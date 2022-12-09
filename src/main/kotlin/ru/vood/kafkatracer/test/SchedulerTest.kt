@@ -8,7 +8,7 @@ import ru.vood.kafkatracer.request.meta.cache.UserCache
 import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
 import java.util.Date
 
-@Service
+//@Service
 class SchedulerTest(val userCache : UserCache) {
     private val logger: Logger = LoggerFactory.getLogger(SchedulerTest::class.java)
 //    @Scheduled(fixedDelay = 10000)

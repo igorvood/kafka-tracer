@@ -6,7 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import ru.vood.kafkatracer.request.meta.cache.UserCache
 
-@Service
+//@Service
 class EvictSchedulerTest(val userCache : UserCache) {
     private val logger: Logger = LoggerFactory.getLogger(EvictSchedulerTest::class.java)
     @Scheduled(fixedDelay = 20000)
