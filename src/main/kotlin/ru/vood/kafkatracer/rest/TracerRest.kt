@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 import ru.vood.kafkatracer.request.meta.cache.UserCache
 import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
 import ru.vood.kafkatracer.request.meta.dto.*
+import java.util.*
 
 @RestController
 @CrossOrigin
@@ -18,9 +19,11 @@ class TracerRest(
     @GetMapping("/arrows/byGroup/{groupId}")
     fun arrowsByGroup(@PathVariable groupId: String): JsGraph {
 
-        val userRequestListen = userCache.userCache[RequestGraphDto(groupId)]
+        val cache = userCache.userCache
+        println("========================"+cache.asMap().keys+"===============================")
+        val userRequestListen = cache[RequestGraphDto(groupId)]
         val traceArrows = userRequestListen.listenTopics.traceArrows
-
+        val messageKafka = userRequestListen.messageKafka
 
         val arrs = traceArrows.map { Arr(getNode(it.from), getNode(it.to)) }
 
@@ -30,7 +33,10 @@ class TracerRest(
             .distinct()
             .sortedBy { it.typeNode.name + it.name }
             .withIndex()
-            .map { JsNode(it.index, it.value.name, it.value.typeNode) }
+            .map { node ->
+                val dateStr = messageKafka[node.value.name]?.let {  Date(it.timestamp).toString() }
+                JsNode(node.index, node.value.name, node.value.typeNode,null,null,dateStr)
+            }
 
         val arrows = arrs.withIndex()
             .map { arrIdx ->

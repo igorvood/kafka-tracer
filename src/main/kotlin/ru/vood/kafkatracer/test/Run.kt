@@ -7,7 +7,7 @@ import ru.vood.kafkatracer.request.meta.cache.UserCache
 import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
 import java.util.*
 
-@Service
+//@Service
 class Run(val userCache : UserCache) : CommandLineRunner {
     override fun run(vararg args: String?) {
         val get =

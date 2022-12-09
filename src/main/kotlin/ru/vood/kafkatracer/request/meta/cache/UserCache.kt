@@ -44,7 +44,7 @@ class UserCache(
 
     val userCache = CacheBuilder
         .newBuilder()
-        .expireAfterWrite(30, TimeUnit.SECONDS)
+        .expireAfterWrite(180, TimeUnit.SECONDS)
 //        .expireAfterAccess(30, TimeUnit.SECONDS)
         .removalListener(listener)
         .build(loader)
