@@ -31,8 +31,8 @@ class UserCache(
             val messageKafka = ConcurrentHashMap<String, KafkaData>()
 
             val topicListeners = requestGraph.topics.associateWith { topic ->
-                kafkaListenerFactory.messageListenerContainer(topic.name) { km -> val prev =
-                    messageKafka.put(topic.name, km)
+                kafkaListenerFactory.messageListenerContainer(topic.name) { km ->
+                    val prev = messageKafka.put(topic.name, km)
                     logger.info("""last msg ${Date(km.timestamp)} topic ${topic.name}, prev msg ${prev?.timestamp}""")
                 }
             }
@@ -48,12 +48,16 @@ class UserCache(
         }
     }
 
+
+
     val cache = CacheBuilder
         .newBuilder()
-        .expireAfterWrite(180, TimeUnit.SECONDS)
+        .expireAfterAccess(60, TimeUnit.MINUTES)
 //        .expireAfterAccess(30, TimeUnit.SECONDS)
         .removalListener(listener)
         .build(loader)
+
+    fun  oldKafkaData(grpId: String, topicName: String) = cache[RequestGraphDto(grpId)].messageKafka//[topicName]
 
 
     fun requestGraph(requestGraphDto: RequestGraphDto): ListenTopics {

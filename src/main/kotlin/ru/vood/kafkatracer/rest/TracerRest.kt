@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
-import ru.vood.kafkatracer.request.meta.cache.KafkaMessageListener
 import ru.vood.kafkatracer.request.meta.cache.UserCache
 import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
 import ru.vood.kafkatracer.request.meta.dto.*
@@ -39,8 +38,11 @@ class TracerRest(
             .sortedBy { it.typeNode.name + it.name }
             .withIndex()
             .map { node ->
-                val dateStr = messageKafka[node.value.name]?.let {  Date(it.timestamp).toString() }
-                JsNode(node.index, node.value.name, node.value.typeNode,null,null,dateStr)
+                val kafkaData = messageKafka[node.value.name]
+                val dateStr = kafkaData?.let {  Date(it.timestamp).toString() }
+                val id = kafkaData?.identity?.id
+                val uid = kafkaData?.identity?.uuid
+                JsNode(node.index, node.value.name, node.value.typeNode,id,uid,dateStr)
             }
 
         val arrows = arrs.withIndex()
