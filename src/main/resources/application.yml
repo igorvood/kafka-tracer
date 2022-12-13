@@ -9,9 +9,10 @@ spring:
   kafka:
     consumer:
       group-id: demo-group-id
-      auto-offset-reset: earliest
+      auto-offset-reset: latest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: on
     security:
       protocol: "PLAINTEXT"
     bootstrap-servers: localhost:29092,localhost:39092,localhost:49092

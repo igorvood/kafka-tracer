@@ -12,6 +12,7 @@ import ru.vood.kafkatracer.request.meta.cache.dto.*
 import ru.vood.kafkatracer.request.meta.dto.FlinkSrvJson
 import ru.vood.kafkatracer.request.meta.dto.TopicJson
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 @Service
@@ -26,7 +27,8 @@ class UserCache(
         override fun load(key: RequestGraphDto): UserRequestListen {
             val requestGraph = requestGraph(key)
 
-            val messageKafka = mutableMapOf<String, KafkaData>()
+
+            val messageKafka = ConcurrentHashMap<String, KafkaData>()
 
             val topicListeners = requestGraph.topics.associateWith { topic ->
                 kafkaListenerFactory.messageListenerContainer(topic.name) { km -> val prev =
