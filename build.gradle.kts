@@ -41,6 +41,13 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.kafka:spring-kafka-test")
 
+    testImplementation("org.awaitility:awaitility:4.2.0")
+
+    testImplementation("com.ninja-squad:springmockk:3.1.2")
+//    implementation("com.ninja-squad:springmockk:4.0.0")
+
+
+
 
 }
 

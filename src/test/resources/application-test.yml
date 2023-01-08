@@ -1,0 +1,24 @@
+configuration:
+  server:
+    host: localhost
+    port: 9091
+spring:
+  kafka:
+    consumer:
+      group-id: demo-group-id
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: on
+    security:
+      protocol: "PLAINTEXT"
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-serializer: org.apache.kafka.common.serialization.StringDeserializer
+logging:
+  level:
+    org:
+      apache:
+        kafka: off
+    ru: info

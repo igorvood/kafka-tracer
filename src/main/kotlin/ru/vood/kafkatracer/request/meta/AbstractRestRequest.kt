@@ -6,17 +6,9 @@ import org.springframework.web.client.RestTemplate
 import ru.vood.kafkatracer.appProps.ConfigurationServerUrl
 
 abstract class AbstractRestRequest(
-    restTemplateBuilder: RestTemplateBuilder
+    val cfgServerUrl: ConfigurationServerUrl,
+    val restTemplate: RestTemplate
 ) {
-
-    private lateinit var cfgServerUrl: ConfigurationServerUrl
-
-    protected val restTemplate: RestTemplate = restTemplateBuilder.build()
-
-    @Autowired
-    private fun set(cfgServerUrl: ConfigurationServerUrl) {
-        this.cfgServerUrl = cfgServerUrl
-    }
 
     fun fullUrl(restEnd: String): String = "http://${cfgServerUrl.host}:${cfgServerUrl.port}/$restEnd"
 
