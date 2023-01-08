@@ -1,7 +1,7 @@
 package ru.vood.kafkatracer.request.meta.dto
 
-sealed interface GraphNodeJson{
-    val  fullName: String
+sealed interface GraphNodeJson {
+    val fullName: String
 }
 
 data class TopicJson(
@@ -16,5 +16,5 @@ data class FlinkSrvJson(
     val profileId: String
 ) : GraphNodeJson {
     override val fullName: String
-        get() = name+"_"+profileId
+        get() = name + "_" + profileId
 }

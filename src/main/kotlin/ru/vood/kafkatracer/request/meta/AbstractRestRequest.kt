@@ -18,8 +18,7 @@ abstract class AbstractRestRequest(
         this.cfgServerUrl = cfgServerUrl
     }
 
-    fun fullUrl(restEnd: String): String =  "http://${cfgServerUrl.host}:${cfgServerUrl.port}/$restEnd"
-
+    fun fullUrl(restEnd: String): String = "http://${cfgServerUrl.host}:${cfgServerUrl.port}/$restEnd"
 
 
 }

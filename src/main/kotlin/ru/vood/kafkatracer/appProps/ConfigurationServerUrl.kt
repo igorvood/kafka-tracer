@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConstructorBinding
 @ConfigurationProperties(prefix = "configuration.server")
-data class ConfigurationServerUrl (val host: String,
-                                   val port: Int,
+data class ConfigurationServerUrl(
+    val host: String,
+    val port: Int,
 )

@@ -8,7 +8,10 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import ru.vood.kafkatracer.configuration.KafkaListenerFactory
 import ru.vood.kafkatracer.request.meta.Req
-import ru.vood.kafkatracer.request.meta.cache.dto.*
+import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
+import ru.vood.kafkatracer.request.meta.cache.dto.ListenTopics
+import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
+import ru.vood.kafkatracer.request.meta.cache.dto.UserRequestListen
 import ru.vood.kafkatracer.request.meta.dto.FlinkSrvJson
 import ru.vood.kafkatracer.request.meta.dto.TopicJson
 import java.util.*
@@ -49,7 +52,6 @@ class UserCache(
     }
 
 
-
     val cache = CacheBuilder
         .newBuilder()
         .expireAfterAccess(60, TimeUnit.MINUTES)
@@ -57,7 +59,7 @@ class UserCache(
         .removalListener(listener)
         .build(loader)
 
-    fun  oldKafkaData(grpId: String, topicName: String) = cache[RequestGraphDto(grpId)].messageKafka//[topicName]
+    fun oldKafkaData(grpId: String, topicName: String) = cache[RequestGraphDto(grpId)].messageKafka//[topicName]
 
 
     fun requestGraph(requestGraphDto: RequestGraphDto): ListenTopics {

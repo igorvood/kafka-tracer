@@ -19,13 +19,14 @@ class TracerRest(
 
 
     private val logger: Logger = LoggerFactory.getLogger(TracerRest::class.java)
+
     //    @Operation(summary = "Получить связи для трекинга", tags = ["Связи"])
     @GetMapping("/arrows/byGroup/{groupId}")
     fun arrowsByGroup(@PathVariable groupId: String): JsGraph {
 
         val cache = userCache.cache
         val userRequestListen = cache[RequestGraphDto(groupId)]
-        logger.info("========================"+cache.asMap().keys+"==============================="+userRequestListen.messageKafka)
+        logger.info("========================" + cache.asMap().keys + "===============================" + userRequestListen.messageKafka)
         val traceArrows = userRequestListen.listenTopics.traceArrows
         val messageKafka = userRequestListen.messageKafka
 
@@ -39,10 +40,10 @@ class TracerRest(
             .withIndex()
             .map { node ->
                 val kafkaData = messageKafka[node.value.name]
-                val dateStr = kafkaData?.let {  Date(it.timestamp).toString() }
+                val dateStr = kafkaData?.let { Date(it.timestamp).toString() }
                 val id = kafkaData?.identity?.id
                 val uid = kafkaData?.identity?.uuid
-                JsNode(node.index, node.value.name, node.value.typeNode,id,uid,dateStr)
+                JsNode(node.index, node.value.name, node.value.typeNode, id, uid, dateStr)
             }
 
         val arrows = arrs.withIndex()

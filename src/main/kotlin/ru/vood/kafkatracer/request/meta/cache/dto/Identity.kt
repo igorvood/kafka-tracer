@@ -4,5 +4,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class Identity(val id: String? = null,
-                    val uuid: String?= null,)
+data class Identity(
+    val id: String? = null,
+    val uuid: String? = null,
+)

@@ -8,7 +8,7 @@ import ru.vood.kafkatracer.request.meta.dto.TraceArrow
 
 
 @Service
-class Req(restTemplateBuilder: RestTemplateBuilder):AbstractRestRequest(restTemplateBuilder) {
+class Req(restTemplateBuilder: RestTemplateBuilder) : AbstractRestRequest(restTemplateBuilder) {
 
 
     fun arrowsByTopic(groupId: String): Set<TraceArrow<GraphNodeJson, GraphNodeJson>> {

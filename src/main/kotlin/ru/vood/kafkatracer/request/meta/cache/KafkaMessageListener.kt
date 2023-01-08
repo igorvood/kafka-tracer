@@ -1,9 +1,6 @@
 package ru.vood.kafkatracer.request.meta.cache
 
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.contextual
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,13 +11,13 @@ import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 class KafkaMessageListener(
     private val topic: String,
 //    private val messageKafka: MutableMap<String, KafkaData>,
-    private val messageApplyFun: (KafkaData)->Unit
+    private val messageApplyFun: (KafkaData) -> Unit
 ) : MessageListener<String, String> {
     private val logger: Logger = LoggerFactory.getLogger(KafkaMessageListener::class.java)
 
 
     val customJson = Json {
-       ignoreUnknownKeys = true
+        ignoreUnknownKeys = true
     }
 
     override fun onMessage(data: ConsumerRecord<String, String>) {

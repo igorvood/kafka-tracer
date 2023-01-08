@@ -1,7 +1,5 @@
 package ru.vood.kafkatracer.request.meta.dto
 
-import java.util.Optional
-
 data class JsonArrow(
     val fromSrv: FlinkSrvJson?,
     val fromTopic: TopicJson?,
