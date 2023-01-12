@@ -12,8 +12,8 @@ import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 import ru.vood.kafkatracer.request.meta.cache.dto.ListenTopics
 import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
 import ru.vood.kafkatracer.request.meta.cache.dto.UserRequestListen
-import ru.vood.kafkatracer.request.meta.dto.FlinkSrvJson
-import ru.vood.kafkatracer.request.meta.dto.TopicJson
+import ru.vood.kafkatracer.request.meta.dto.FlinkSrvDto
+import ru.vood.kafkatracer.request.meta.dto.TopicDto
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
@@ -68,10 +68,10 @@ class UserCache(
 
         val topics = traceArrows.map {
             val graphNodeJson = when (val to = it.to) {
-                is TopicJson -> to
-                is FlinkSrvJson -> {
+                is TopicDto -> to
+                is FlinkSrvDto -> {
                     val from = it.from
-                    if (from is TopicJson) {
+                    if (from is TopicDto) {
                         from
                     } else throw java.lang.IllegalStateException("zsda")
                 }

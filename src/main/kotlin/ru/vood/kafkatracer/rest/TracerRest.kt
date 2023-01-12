@@ -68,10 +68,10 @@ class TracerRest(
         return JsGraph(nodes, arrows)
     }
 
-    private fun getNode(from: GraphNodeJson): Node {
+    private fun getNode(from: GraphNodeDto): Node {
         return when (from) {
-            is TopicJson -> Node(from.fullName, TypeNodeEnum.TOPIC)
-            is FlinkSrvJson -> Node(from.fullName, TypeNodeEnum.FLINK)
+            is TopicDto -> Node(from.fullName, TypeNodeEnum.TOPIC)
+            is FlinkSrvDto -> Node(from.fullName, TypeNodeEnum.FLINK)
         }
     }
 

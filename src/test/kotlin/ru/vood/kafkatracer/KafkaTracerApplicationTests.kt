@@ -109,14 +109,14 @@ class KafkaTracerApplicationTests {
         val t1FromName = "t1_from"
         val t1ToName = "t1_To"
 
-        val flinkSrvJson = ru.vood.kafkatracer.request.meta.dto.FlinkSrvJson("test_srv", "test_profile")
-        val t1From = ru.vood.kafkatracer.request.meta.dto.TopicJson(t1FromName)
+        val flinkSrvDto = ru.vood.kafkatracer.request.meta.dto.FlinkSrvDto("test_srv", "test_profile")
+        val t1From = ru.vood.kafkatracer.request.meta.dto.TopicDto(t1FromName)
 
-        val t1To = ru.vood.kafkatracer.request.meta.dto.TopicJson(t1ToName)
+        val t1To = ru.vood.kafkatracer.request.meta.dto.TopicDto(t1ToName)
 
         val arrows = arrayOf<JsonArrow>(
-            JsonArrow(null, t1From, flinkSrvJson, null),
-            JsonArrow(flinkSrvJson, null, null, t1To),
+            JsonArrow(null, t1From, flinkSrvDto, null),
+            JsonArrow(flinkSrvDto, null, null, t1To),
         )
     }
 }
