@@ -27,11 +27,11 @@ class TracerRest(
     fun arrowsByGroup(@PathVariable groupId: String): JsGraph {
 
         val cache = userCache.cache
-        return extractJsGraphFromChache(cache, groupId)
+        return extractJsGraphFromCache(cache, groupId)
 
     }
 
-    private fun extractJsGraphFromChache(
+    private fun extractJsGraphFromCache(
         cache: LoadingCache<RequestGraphDto, UserRequestListen>,
         groupId: String
     ): JsGraph {

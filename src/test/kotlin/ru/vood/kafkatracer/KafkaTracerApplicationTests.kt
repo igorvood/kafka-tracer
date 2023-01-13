@@ -115,8 +115,8 @@ class KafkaTracerApplicationTests {
         val t1To = ru.vood.kafkatracer.request.meta.dto.TopicDto(t1ToName)
 
         val arrows = arrayOf<JsonArrow>(
-            JsonArrow(null, t1From, flinkSrvDto, null),
-            JsonArrow(flinkSrvDto, null, null, t1To),
+            JsonArrow( t1From, flinkSrvDto),
+            JsonArrow(flinkSrvDto,  t1To),
         )
     }
 }
