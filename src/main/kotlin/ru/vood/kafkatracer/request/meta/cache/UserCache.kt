@@ -5,8 +5,10 @@ import com.google.common.cache.CacheLoader
 import com.google.common.cache.RemovalListener
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Lookup
+import org.springframework.kafka.core.ConsumerFactory
+import org.springframework.kafka.listener.AbstractMessageListenerContainer
 import org.springframework.stereotype.Service
-import ru.vood.kafkatracer.configuration.KafkaListenerFactory
 import ru.vood.kafkatracer.request.meta.Req
 import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 import ru.vood.kafkatracer.request.meta.cache.dto.ListenTopics
@@ -21,25 +23,41 @@ import java.util.concurrent.TimeUnit
 @Service
 class UserCache(
     val req: Req,
-    val kafkaListenerFactory: KafkaListenerFactory
+    val cnsFactory: ConsumerFactory<String, String>,
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(UserCache::class.java)
+
+    @Lookup
+    fun messageListenerContainer(
+        topic: String,
+        messageApplyFun: (KafkaData) -> Unit,
+        cnsFactory: ConsumerFactory<String, String>
+    ): AbstractMessageListenerContainer<String, String> {
+        error("must be implemented by Spring")
+    }
+
+    val processKafkaMessage: (String, ConcurrentHashMap<String, KafkaData>) -> ((KafkaData) -> Unit) =
+        { topicName, messageKafkaMap ->
+            val process: (KafkaData) -> Unit = { km ->
+                val prev = messageKafkaMap.put(topicName, km)
+                logger.info("""last msg ${Date(km.timestamp)} topic ${topicName}, prev msg ${prev?.timestamp}""")
+            }
+            process
+        }
+
 
     private final val loader = object : CacheLoader<RequestGraphDto, UserRequestListen>() {
         override fun load(key: RequestGraphDto): UserRequestListen {
             val requestGraph = requestGraph(key)
 
-
             val messageKafka = ConcurrentHashMap<String, KafkaData>()
 
-            val topicListeners = requestGraph.topics.associateWith { topic ->
-                kafkaListenerFactory.messageListenerContainer(topic.name) { km ->
-                    val prev = messageKafka.put(topic.name, km)
-                    logger.info("""last msg ${Date(km.timestamp)} topic ${topic.name}, prev msg ${prev?.timestamp}""")
-                }
-            }
-
+            val topicListeners: Map<TopicDto, AbstractMessageListenerContainer<String, String>> =
+                requestGraph.topics
+                    .associateWith { topic ->
+                        messageListenerContainer(topic.name, processKafkaMessage(topic.name, messageKafka), cnsFactory)
+                    }
             return UserRequestListen(requestGraph, topicListeners, messageKafka)
         }
     }

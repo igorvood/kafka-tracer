@@ -1,27 +1,34 @@
 package ru.vood.kafkatracer.configuration
 
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Scope
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.listener.AbstractMessageListenerContainer
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer
 import org.springframework.kafka.listener.ContainerProperties
-import org.springframework.kafka.listener.KafkaMessageListenerContainer
-import org.springframework.stereotype.Service
 import ru.vood.kafkatracer.request.meta.cache.KafkaMessageListener
 import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 
-@Service
-class KafkaListenerFactory(private val kafkaProperties: KafkaProperties) {
+@Configuration
+class KafkaConfiguration {
 
-    fun messageListenerContainer(
-        topic: String,
-        messageApplyFun: (KafkaData) -> Unit
-    ): AbstractMessageListenerContainer<String, String> {
+    @Bean
+    fun consumerFactory(kafkaProperties: KafkaProperties): ConsumerFactory<String, String> {
+        val buildConsumerProperties = kafkaProperties.buildConsumerProperties()
+        return DefaultKafkaConsumerFactory(buildConsumerProperties)
+    }
+
+    @Bean
+    @Scope("prototype")
+    fun kafkaListenerFactory1(topic: String,
+                             messageApplyFun: (KafkaData) -> Unit,
+                             cnsFactory: ConsumerFactory<String, String>): AbstractMessageListenerContainer<String, String> {
         val containerProperties = ContainerProperties(topic)
         containerProperties.messageListener = KafkaMessageListener(topic, messageApplyFun)
-        val consumerFactory: ConsumerFactory<String, String> = DefaultKafkaConsumerFactory(consumerProperties())
-        val listenerContainer = ConcurrentMessageListenerContainer(consumerFactory, containerProperties)
+        val listenerContainer = ConcurrentMessageListenerContainer(cnsFactory, containerProperties)
         listenerContainer.isAutoStartup = false
 
         // bean name is the prefix of kafka consumer thread name
@@ -30,11 +37,5 @@ class KafkaListenerFactory(private val kafkaProperties: KafkaProperties) {
         listenerContainer.start()
 
         return listenerContainer
-    }
-
-
-    private fun consumerProperties(): Map<String, Any> {
-        val buildConsumerProperties = kafkaProperties.buildConsumerProperties()
-        return buildConsumerProperties
     }
 }
