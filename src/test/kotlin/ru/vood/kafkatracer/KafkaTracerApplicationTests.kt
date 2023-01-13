@@ -1,5 +1,6 @@
 package ru.vood.kafkatracer
 
+import arrow.core.Either
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.MockKAnnotations
 import io.mockk.every
@@ -9,6 +10,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.SetSerializer
 import kotlinx.serialization.json.Json
 import org.awaitility.Awaitility.await
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,6 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.util.concurrent.ListenableFuture
 import org.springframework.web.client.RestTemplate
 import ru.vood.kafkatracer.request.meta.Req
+import ru.vood.kafkatracer.request.meta.cache.dto.Identity
 import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
 import ru.vood.kafkatracer.request.meta.dto.JsonArrow
 import ru.vood.kafkatracer.rest.TracerRest
@@ -66,43 +69,58 @@ class KafkaTracerApplicationTests {
     }
     @Test
     fun contextLoads() {
-//        val beanDefinitionNames = producer.beanDefinitionNames
-//        println(beanDefinitionNames)
-//        println(beanDefinitionNames.filter { it.contains("prod", true) })
-//
-//        val bean = producer.getBean("kafkaProducerFactory", DefaultKafkaProducerFactory::class.java)
-//
-//        bean.
-
         every { restTemplate.getForObject(any<String>(), String::class.java) } returns arrowsJsonStr
         every { restTemplateBuilder.build() } returns restTemplate
 
-        val arrowsByGroup = runBlocking {
-            val arrowsByGroup = tracerRest.arrowsByGroup("1")
-            withContext(Dispatchers.IO) {
-                Thread.sleep(1000)
+        val result = (1..10)
+            .map {
+                arrow.core.Either.catch {
+                    val arrowsByGroup = runBlocking {
+                        val arrowsByGroup = tracerRest.arrowsByGroup("1")
+                        withContext(Dispatchers.IO) {
+                            Thread.sleep(1000)
+                        }
+                        arrowsByGroup
+                    }
+
+                    val f1: (String) -> ListenableFuture<SendResult<String, String>> =
+                        { a -> kafkaTemplate.send(t1FromName, a, "{}") }
+                    val f2: (String) -> ListenableFuture<SendResult<String, String>> =
+                        { a -> kafkaTemplate.send(t1ToName, a, "{}") }
+
+                    val sendList = listOf(f1, f2)
+                        .withIndex()
+                        .map { f -> f.value(f.index.toString()) }
+
+                    await()
+                        .atMost(10, TimeUnit.SECONDS)
+                        .until { sendList.filter { it.isDone }.size == sendList.size }
+
+
+                    await()
+                        .atMost(10, TimeUnit.SECONDS)
+                        .until { tracerRest.userCache.cache.get(RequestGraphDto("1")).messageKafka.size == sendList.size }
+                    val messageKafka = tracerRest.userCache.cache.get(RequestGraphDto("1")).messageKafka
+
+
+                    assert(messageKafka.map { it.value.identity }.contains(Identity()))
+                    tracerRest.userCache.cache.invalidateAll()
+                }
             }
-            arrowsByGroup
+
+        val okResult = result.filterIsInstance<Either.Right<Unit>>()
+        if (okResult.size!=result.size){
+            val errorResult = result.filterIsInstance<Either.Left<Throwable>>()
+            val joinToString = errorResult
+                .map { it.value.message }
+                .joinToString("\n")
+
+
+            Assertions.assertNull("Expected ${okResult.size} success, but ${errorResult.size} is error\n"+joinToString)
         }
 
-        val f1: (String) -> ListenableFuture<SendResult<String, String>> = { a-> kafkaTemplate.send(t1FromName, a, "{}") }
-        val f2: (String) -> ListenableFuture<SendResult<String, String>> = { a-> kafkaTemplate.send(t1ToName, a, "{}") }
-
-        val sendList = listOf(f1, f2)
-            .withIndex()
-            .map { f -> f.value(f.index.toString()) }
-
-        await()
-            .atMost(10, TimeUnit.SECONDS)
-            .until { sendList.filter { it.isDone }.size==sendList.size}
 
 
-        await()
-            .atMost(10, TimeUnit.SECONDS)
-            .until { tracerRest.userCache.cache.get(RequestGraphDto("1")).messageKafka.size == sendList.size }
-        val messageKafka = tracerRest.userCache.cache.get(RequestGraphDto("1")).messageKafka
-
-        println(messageKafka)
     }
 
 
@@ -122,5 +140,6 @@ class KafkaTracerApplicationTests {
         ).toSet()
 
         val arrowsJsonStr = Json.encodeToString(SetSerializer(JsonArrow.serializer()),  arrows)
+
     }
 }
