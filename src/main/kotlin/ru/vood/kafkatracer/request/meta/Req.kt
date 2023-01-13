@@ -1,5 +1,7 @@
 package ru.vood.kafkatracer.request.meta
 
+import kotlinx.serialization.builtins.SetSerializer
+import kotlinx.serialization.json.Json
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import ru.vood.kafkatracer.appProps.ConfigurationServerUrl
@@ -16,19 +18,14 @@ class Req(cfgServerUrl: ConfigurationServerUrl,
 
     fun arrowsByTopic(groupId: String): Set<TraceArrow<GraphNodeDto, GraphNodeDto>> {
 
-        restTemplate.getForObject(
-            fullUrl("arrows/byGroup/$groupId"),
-            Array<JsonArrow>::class.java
+        val traceArrows = restTemplate.getForObject(
+            fullUrl("tracking/arrows/$groupId"),
+            String::class.java
         )
-
-        val forObject = restTemplate.getForObject(
-            fullUrl("arrows/byGroup/$groupId"),
-            Array<JsonArrow>::class.java
-        )
-        return forObject!!
-            .map { it.arrow() }
-            .toSet()
-
+            ?.let { Json.decodeFromString(SetSerializer(JsonArrow.serializer()), it) }
+            ?.map { it.arrow() }
+            ?.toSet() ?: setOf()
+        return traceArrows
 
     }
 

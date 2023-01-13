@@ -56,7 +56,8 @@ class UserCache(
             val topicListeners: Map<TopicDto, AbstractMessageListenerContainer<String, String>> =
                 requestGraph.topics
                     .associateWith { topic ->
-                        messageListenerContainer(topic.name, processKafkaMessage(topic.name, messageKafka), cnsFactory)
+                        val messageApplyFun = processKafkaMessage(topic.name, messageKafka)
+                        messageListenerContainer(topic.name, messageApplyFun, cnsFactory)
                     }
             return UserRequestListen(requestGraph, topicListeners, messageKafka)
         }

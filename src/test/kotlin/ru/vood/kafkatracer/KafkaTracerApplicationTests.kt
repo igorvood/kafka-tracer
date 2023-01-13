@@ -6,6 +6,8 @@ import io.mockk.every
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.builtins.SetSerializer
+import kotlinx.serialization.json.Json
 import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -72,7 +74,7 @@ class KafkaTracerApplicationTests {
 //
 //        bean.
 
-        every { restTemplate.getForObject(any<String>(), Array<JsonArrow>::class.java) } returns arrows
+        every { restTemplate.getForObject(any<String>(), String::class.java) } returns arrowsJsonStr
         every { restTemplateBuilder.build() } returns restTemplate
 
         val arrowsByGroup = runBlocking {
@@ -114,9 +116,11 @@ class KafkaTracerApplicationTests {
 
         val t1To = ru.vood.kafkatracer.request.meta.dto.TopicDto(t1ToName)
 
-        val arrows = arrayOf<JsonArrow>(
+        val arrows = arrayOf(
             JsonArrow( t1From, flinkSrvDto),
             JsonArrow(flinkSrvDto,  t1To),
-        )
+        ).toSet()
+
+        val arrowsJsonStr = Json.encodeToString(SetSerializer(JsonArrow.serializer()),  arrows)
     }
 }

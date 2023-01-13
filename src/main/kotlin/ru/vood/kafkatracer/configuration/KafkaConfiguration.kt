@@ -28,7 +28,7 @@ class KafkaConfiguration {
                              cnsFactory: ConsumerFactory<String, String>): AbstractMessageListenerContainer<String, String> {
         val containerProperties = ContainerProperties(topic)
         containerProperties.messageListener = KafkaMessageListener(topic, messageApplyFun)
-        val listenerContainer = ConcurrentMessageListenerContainer(cnsFactory, containerProperties)
+        val listenerContainer: ConcurrentMessageListenerContainer<String, String> = ConcurrentMessageListenerContainer(cnsFactory, containerProperties)
         listenerContainer.isAutoStartup = false
 
         // bean name is the prefix of kafka consumer thread name
