@@ -65,6 +65,11 @@ class UserCache(
 
 
     private final val listener = RemovalListener<RequestGraphDto, UserRequestListen> { n ->
+        n.value?.topicListeners?.values?.forEach {
+            logger.info("=======stop $it beanName ${it.beanName}")
+            it.stop()
+        }
+        logger.info("=======delete user trace request ${n.key} cause ${n.cause}")
         if (n.wasEvicted()) {
             logger.info("----delete user trace request ${n.key} cause ${n.cause}")
         }

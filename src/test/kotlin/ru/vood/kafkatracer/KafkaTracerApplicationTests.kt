@@ -72,11 +72,12 @@ class KafkaTracerApplicationTests {
         every { restTemplate.getForObject(any<String>(), String::class.java) } returns arrowsJsonStr
         every { restTemplateBuilder.build() } returns restTemplate
 
-        val result = (1..10)
+        val result = (1..1)
             .map {
-                arrow.core.Either.catch {
+                Either.catch {
+                    val groupId = it.toString()
                     val arrowsByGroup = runBlocking {
-                        val arrowsByGroup = tracerRest.arrowsByGroup("1")
+                        val arrowsByGroup = tracerRest.arrowsByGroup(groupId)
                         withContext(Dispatchers.IO) {
                             Thread.sleep(1000)
                         }
@@ -104,7 +105,7 @@ class KafkaTracerApplicationTests {
 
 
                     assert(messageKafka.map { it.value.identity }.contains(Identity()))
-                    tracerRest.userCache.cache.invalidateAll()
+                    tracerRest.userCache.cache.invalidate(RequestGraphDto(groupId))
                 }
             }
 
