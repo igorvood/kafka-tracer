@@ -32,8 +32,8 @@ class UserCache(
     fun messageListenerContainer(
         topic: String,
         messageApplyFun: (KafkaData) -> Unit,
-        cnsFactory: ConsumerFactory<String, String>
-    ): AbstractMessageListenerContainer<String, String> {
+        cnsFactory: () -> ConsumerFactory<String, String>
+    ): AbstractMessageListenerContainer<*, *> {
         error("must be implemented by Spring")
     }
 
@@ -53,11 +53,11 @@ class UserCache(
 
             val messageKafka = ConcurrentHashMap<String, KafkaData>()
 
-            val topicListeners: Map<TopicDto, AbstractMessageListenerContainer<String, String>> =
+            val topicListeners =
                 requestGraph.topics
                     .associateWith { topic ->
                         val messageApplyFun = processKafkaMessage(topic.name, messageKafka)
-                        messageListenerContainer(topic.name, messageApplyFun, cnsFactory)
+                        messageListenerContainer(topic.name, messageApplyFun, { cnsFactory })
                     }
             return UserRequestListen(requestGraph, topicListeners, messageKafka)
         }

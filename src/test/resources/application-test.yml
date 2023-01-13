@@ -21,4 +21,5 @@ logging:
     org:
       apache:
         kafka: off
+      springframework: trace
     ru: info

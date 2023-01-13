@@ -1,6 +1,6 @@
 package ru.vood.kafkatracer.request.meta.dto
 
-data class JsNode(
+data class UINode(
     val index: Int,
     val name: String,
     val typeNode: TypeNodeEnum,

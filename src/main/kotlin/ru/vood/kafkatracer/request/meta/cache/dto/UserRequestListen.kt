@@ -6,6 +6,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 data class UserRequestListen(
     val listenTopics: ListenTopics,
-    val topicListeners: Map<TopicDto, AbstractMessageListenerContainer<String, String>>,
+    val topicListeners: Map<TopicDto, AbstractMessageListenerContainer<*, *>>,
     val messageKafka: ConcurrentHashMap<String, KafkaData>
 )

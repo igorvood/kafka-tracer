@@ -53,7 +53,7 @@ class TracerRest(
                 val dateStr = kafkaData?.let { Date(it.timestamp).toString() }
                 val id = kafkaData?.identity?.id
                 val uid = kafkaData?.identity?.uuid
-                JsNode(node.index, node.value.name, node.value.typeNode, id, uid, dateStr)
+                UINode(node.index, node.value.name, node.value.typeNode, id, uid, dateStr)
             }
 
         val arrows = arrs.withIndex()
@@ -62,7 +62,7 @@ class TracerRest(
                 val arr = arrIdx.value
                 val fromIndex = nodes.find { n -> n.name == arr.from.name && n.typeNode == arr.from.typeNode }!!.index
                 val toIndex = nodes.find { n -> n.name == arr.to.name && n.typeNode == arr.to.typeNode }!!.index
-                JsArrows(index, fromIndex, toIndex)
+                UIArrows(index, fromIndex, toIndex)
             }
 
         return JsGraph(nodes, arrows)

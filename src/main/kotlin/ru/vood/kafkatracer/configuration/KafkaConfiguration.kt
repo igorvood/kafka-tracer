@@ -13,7 +13,7 @@ import ru.vood.kafkatracer.request.meta.cache.KafkaMessageListener
 import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 
 @Configuration
-class KafkaConfiguration {
+open class KafkaConfiguration {
 
     @Bean
     fun consumerFactory(kafkaProperties: KafkaProperties): ConsumerFactory<String, String> {
@@ -25,10 +25,11 @@ class KafkaConfiguration {
     @Scope("prototype")
     fun kafkaListenerFactory1(topic: String,
                              messageApplyFun: (KafkaData) -> Unit,
-                             cnsFactory: ConsumerFactory<String, String>): AbstractMessageListenerContainer<String, String> {
+                             cnsFactory: () -> ConsumerFactory<String, String>
+    ): AbstractMessageListenerContainer<String, String> {
         val containerProperties = ContainerProperties(topic)
         containerProperties.messageListener = KafkaMessageListener(topic, messageApplyFun)
-        val listenerContainer: ConcurrentMessageListenerContainer<String, String> = ConcurrentMessageListenerContainer(cnsFactory, containerProperties)
+        val listenerContainer: ConcurrentMessageListenerContainer<String, String> = ConcurrentMessageListenerContainer(cnsFactory(), containerProperties)
         listenerContainer.isAutoStartup = false
 
         // bean name is the prefix of kafka consumer thread name
