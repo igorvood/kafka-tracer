@@ -21,9 +21,11 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 @Service
+@Deprecated("not in ")
 class UserCache(
     val req: Req,
     val cnsFactory: ConsumerFactory<String, String>,
+    val topicCache: TopicCache
 ) {
 
     private val logger: Logger = LoggerFactory.getLogger(UserCache::class.java)
@@ -47,13 +49,17 @@ class UserCache(
         }
 
 
-    private final val loader = object : CacheLoader<RequestGraphDto, UserRequestListen>() {
+    private final val loader: CacheLoader<RequestGraphDto, UserRequestListen> = object : CacheLoader<RequestGraphDto, UserRequestListen>() {
         override fun load(key: RequestGraphDto): UserRequestListen {
             val requestGraph = requestGraph(key)
 
+
+            val map = requestGraph.topics.associateWith { topicCache.cache.get(it) }
+
+
             val messageKafka = ConcurrentHashMap<String, KafkaData>()
 
-            val topicListeners =
+            val topicListeners: Map<TopicDto, AbstractMessageListenerContainer<*, *>> =
                 requestGraph.topics
                     .associateWith { topic ->
                         val messageApplyFun = processKafkaMessage(topic.name, messageKafka)
@@ -82,9 +88,6 @@ class UserCache(
 //        .expireAfterAccess(30, TimeUnit.SECONDS)
         .removalListener(listener)
         .build(loader)
-
-    fun oldKafkaData(grpId: String, topicName: String) = cache[RequestGraphDto(grpId)].messageKafka//[topicName]
-
 
     fun requestGraph(requestGraphDto: RequestGraphDto): ListenTopics {
 

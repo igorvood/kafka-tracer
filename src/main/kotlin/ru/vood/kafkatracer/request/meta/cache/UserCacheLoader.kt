@@ -8,6 +8,7 @@ import ru.vood.kafkatracer.request.meta.dto.FlinkSrvDto
 import ru.vood.kafkatracer.request.meta.dto.TopicDto
 
 @Service
+@Deprecated("Not is use")
 class UserCacheLoader(val req: Req) : CacheLoader<String, ListenTopics>() {
 
     override fun load(key: String): ListenTopics {
