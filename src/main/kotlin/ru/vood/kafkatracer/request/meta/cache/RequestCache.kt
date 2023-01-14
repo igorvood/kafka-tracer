@@ -12,8 +12,8 @@ import ru.vood.kafkatracer.request.meta.dto.TopicDto
 
 @Service
 class RequestCache(
-    val req: Req,
-    val topicCache: TopicCache
+    private val req: Req,
+    private val topicCache: TopicCache
 ) : AbstractCacheBuilder<RequestGraphDto, GroupRequestListen>() {
 
     override val removalListener: RemovalListener<RequestGraphDto, GroupRequestListen>

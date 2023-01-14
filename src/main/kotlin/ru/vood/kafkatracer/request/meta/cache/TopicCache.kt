@@ -17,11 +17,13 @@ class TopicCache(
     val cnsFactory: ConsumerFactory<String, String>,
 ) : AbstractCacheBuilder<TopicDto, TopicCacheValue>() {
 
-    private val processKafkaMessage: (String, ConcurrentHashMap<String, KafkaData>) -> ((KafkaData) -> Unit) =
+    private val processKafkaMessage: (String, AtomicRef<KafkaData?>) -> ((KafkaData) -> Unit) =
         { topicName, messageKafkaMap ->
             val process: (KafkaData) -> Unit = { km ->
-                val prev = messageKafkaMap.put(topicName, km)
-                logger.info("""last msg ${Date(km.timestamp)} topic ${topicName}, prev msg ${prev?.timestamp}""")
+                val get = messageKafkaMap.get()
+                logger.info("""last msg ${Date(km.timestamp)} topic ${topicName}, prev msg ${get?.timestamp}""")
+                messageKafkaMap.set( km)
+
             }
             process
         }
@@ -46,10 +48,11 @@ class TopicCache(
     override val loader: CacheLoader<TopicDto, TopicCacheValue>
         get() = object : CacheLoader<TopicDto, TopicCacheValue>() {
             override fun load(topic: TopicDto): TopicCacheValue {
-                val messageKafka = processKafkaMessage(topic.name, ConcurrentHashMap<String, KafkaData>())
-                    .let { messageListenerContainer(topic.name, it) { cnsFactory } }
+                val atomicRef = AtomicRef<KafkaData?>(null)
+                val messageKafka = processKafkaMessage(topic.name, atomicRef)
+                    .let {saveMessageFunction ->  messageListenerContainer(topic.name, saveMessageFunction) { cnsFactory } }
 
-                return TopicCacheValue(messageKafka)
+                return TopicCacheValue(messageKafka, atomicRef)
             }
         }
 
@@ -57,6 +60,6 @@ class TopicCache(
 
 data class TopicCacheValue(
     val listener: AbstractMessageListenerContainer<*, *>,
-    val lastKafkaMessage: AtomicRef<KafkaData?> = AtomicRef(null),
+    val lastKafkaMessage: AtomicRef<KafkaData?>,
 
     )

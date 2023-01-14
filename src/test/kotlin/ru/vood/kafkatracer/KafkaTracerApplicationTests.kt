@@ -26,6 +26,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.util.concurrent.ListenableFuture
 import org.springframework.web.client.RestTemplate
 import ru.vood.kafkatracer.request.meta.Req
+import ru.vood.kafkatracer.request.meta.cache.RequestCache
+import ru.vood.kafkatracer.request.meta.cache.TopicCache
 import ru.vood.kafkatracer.request.meta.cache.dto.Identity
 import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
 import ru.vood.kafkatracer.request.meta.dto.JsonArrow
@@ -54,7 +56,17 @@ class KafkaTracerApplicationTests {
     lateinit var req: Req
 
     @Autowired
+    lateinit var topicCache: TopicCache
+
+
+
+    @Autowired
     lateinit var tracerRest: TracerRest
+
+    @Autowired
+    lateinit var requestCache: RequestCache
+
+
 
     @Autowired
     lateinit var kafkaTemplate: KafkaTemplate<String, String>
@@ -72,7 +84,7 @@ class KafkaTracerApplicationTests {
         every { restTemplate.getForObject(any<String>(), String::class.java) } returns arrowsJsonStr
         every { restTemplateBuilder.build() } returns restTemplate
 
-        val result = (1..1)
+        val result = (1..100)
             .map {
                 Either.catch {
                     val groupId = it.toString()
@@ -100,12 +112,15 @@ class KafkaTracerApplicationTests {
 
                     await()
                         .atMost(10, TimeUnit.SECONDS)
-                        .until { tracerRest.userCache.cache.get(RequestGraphDto("1")).messageKafka.size == sendList.size }
-                    val messageKafka = tracerRest.userCache.cache.get(RequestGraphDto("1")).messageKafka
+                        .until { requestCache.cache.get(RequestGraphDto("1")).topicListeners.size == sendList.size }
+                    val groupCacheData = requestCache.cache.get(RequestGraphDto("1"))
+                    val messageKafka = groupCacheData
+                        .topicListeners.entries.map { it.value.lastKafkaMessage.get() }
 
-
-                    assert(messageKafka.map { it.value.identity }.contains(Identity()))
-                    tracerRest.userCache.cache.invalidate(RequestGraphDto(groupId))
+                    assert(messageKafka.map { it?.identity }.contains(Identity()))
+//                    val requestGraphDto = RequestGraphDto(groupId)
+                    topicCache.cache.invalidateAll()
+//                    requestCache.cache.invalidate(requestGraphDto)
                 }
             }
 
