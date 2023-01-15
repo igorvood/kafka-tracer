@@ -84,7 +84,7 @@ class KafkaTracerApplicationTests {
         every { restTemplate.getForObject(any<String>(), String::class.java) } returns arrowsJsonStr
         every { restTemplateBuilder.build() } returns restTemplate
 
-        val result = (1..100)
+        val result = (1..1000)
             .map {
                 Either.catch {
                     val groupId = it.toString()
