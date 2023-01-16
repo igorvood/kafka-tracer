@@ -9,8 +9,6 @@ import ru.vood.kafkatracer.request.meta.cache.dto.Identity
 import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 
 class KafkaMessageListener(
-    private val topic: String,
-//    private val messageKafka: MutableMap<String, KafkaData>,
     private val messageApplyFun: (KafkaData) -> Unit
 ) : MessageListener<String, String> {
     private val logger: Logger = LoggerFactory.getLogger(KafkaMessageListener::class.java)
@@ -28,16 +26,11 @@ class KafkaMessageListener(
 
         val identity = customJson.decodeFromString(Identity.serializer(), value)
 
-
-//        val user: Identity = Gson().fromJson(value, Identity::class.java)
-
         val pip = data.topic()
 
 
         val kafkaData = KafkaData(key, headers, timestamp, value, pip, identity)
 
-//        logger.info("""last msg ${Date(timestamp)} topic $topic""")
         messageApplyFun(kafkaData)
-//        messageKafka[topic] = kafkaData
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.listener.AbstractMessageListenerContainer
 import org.springframework.stereotype.Service
 import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
+import ru.vood.kafkatracer.request.meta.cache.dto.TopicCacheValue
 import ru.vood.kafkatracer.request.meta.dto.TopicDto
 import java.util.*
 
@@ -61,9 +62,3 @@ class TopicCache(
         }
 
 }
-
-data class TopicCacheValue(
-    val listener: AbstractMessageListenerContainer<*, *>,
-    val lastKafkaMessage: AtomicRef<KafkaData?>,
-
-    )

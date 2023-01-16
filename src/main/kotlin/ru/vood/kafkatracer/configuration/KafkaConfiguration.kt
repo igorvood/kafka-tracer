@@ -13,7 +13,7 @@ import ru.vood.kafkatracer.request.meta.cache.KafkaMessageListener
 import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 
 @Configuration
-open class KafkaConfiguration {
+class KafkaConfiguration {
 
     @Bean
     fun consumerFactory(kafkaProperties: KafkaProperties): ConsumerFactory<String, String> {
@@ -29,7 +29,7 @@ open class KafkaConfiguration {
         cnsFactory: () -> ConsumerFactory<String, String>
     ): AbstractMessageListenerContainer<String, String> {
         val containerProperties = ContainerProperties(topic)
-        containerProperties.messageListener = KafkaMessageListener(topic, messageApplyFun)
+        containerProperties.messageListener = KafkaMessageListener(messageApplyFun)
         val listenerContainer: ConcurrentMessageListenerContainer<String, String> =
             ConcurrentMessageListenerContainer(cnsFactory(), containerProperties)
         listenerContainer.isAutoStartup = false

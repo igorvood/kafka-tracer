@@ -14,16 +14,11 @@ class ArrowsRepository(
     restTemplate: RestTemplate
 ) : AbstractRestRequest(cfgServerUrl, restTemplate) {
 
-
     fun arrowsByTopic(groupId: String): Set<JsonArrow> {
 
-        return restTemplate.getForObject(
-            fullUrl("tracking/arrows/$groupId"),
-            String::class.java
-        )
+        return sendRestGet1<String>(groupId)
             ?.let { Json.decodeFromString(SetSerializer(JsonArrow.serializer()), it) }
             ?.toSet() ?: setOf()
-
     }
 
 }

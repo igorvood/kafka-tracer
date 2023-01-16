@@ -16,7 +16,6 @@ abstract class AbstractCacheBuilder<K, V> {
     protected abstract val loader: CacheLoader<K, V>
 
     val cache: LoadingCache<K, V> = CacheBuilder.newBuilder()
-//        .expireAfterAccess(60, TimeUnit.MINUTES)
         .expireAfterAccess(30, TimeUnit.SECONDS)
         .removalListener(removalListener)
         .build(loader)
