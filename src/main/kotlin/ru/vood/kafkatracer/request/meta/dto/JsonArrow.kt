@@ -11,11 +11,6 @@ data class JsonArrow(
 
     @Deprecated("лишний класс TraceArrow")
     fun arrow(): TraceArrow<GraphNodeDto, GraphNodeDto> {
-
-//        TraceArrow(from, to)
-//        val from = fromSrv ?: fromTopic!!
-//        val traceArrow = TraceArrow(fromSrv ?: fromTopic!!, toSrv ?: toTopic!!)
-
         return TraceArrow(from, to)
 
     }
