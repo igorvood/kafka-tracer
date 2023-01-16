@@ -11,7 +11,7 @@ import ru.vood.kafkatracer.request.meta.dto.TraceArrow
 
 
 @Service
-class Req(
+class ArrowsRepository(
     cfgServerUrl: ConfigurationServerUrl,
     restTemplate: RestTemplate
 ) : AbstractRestRequest(cfgServerUrl, restTemplate) {

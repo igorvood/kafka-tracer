@@ -25,7 +25,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.util.concurrent.ListenableFuture
 import org.springframework.web.client.RestTemplate
-import ru.vood.kafkatracer.request.meta.Req
+import ru.vood.kafkatracer.request.meta.ArrowsRepository
 import ru.vood.kafkatracer.request.meta.cache.RequestCache
 import ru.vood.kafkatracer.request.meta.cache.TopicCache
 import ru.vood.kafkatracer.request.meta.cache.dto.Identity
@@ -54,7 +54,7 @@ class KafkaTracerApplicationTests {
 
 
     @Autowired
-    lateinit var req: Req
+    lateinit var req: ArrowsRepository
 
     @Autowired
     lateinit var topicCache: TopicCache
