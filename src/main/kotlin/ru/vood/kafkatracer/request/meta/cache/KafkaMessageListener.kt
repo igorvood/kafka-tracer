@@ -1,10 +1,10 @@
 package ru.vood.kafkatracer.request.meta.cache
 
-import kotlinx.serialization.json.Json
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.kafka.listener.MessageListener
+import ru.vood.kafkatracer.configuration.customJson
 import ru.vood.kafkatracer.request.meta.cache.dto.Identity
 import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 
@@ -13,10 +13,6 @@ class KafkaMessageListener(
 ) : MessageListener<String, String> {
     private val logger: Logger = LoggerFactory.getLogger(KafkaMessageListener::class.java)
 
-
-    val customJson = Json {
-        ignoreUnknownKeys = true
-    }
 
     override fun onMessage(data: ConsumerRecord<String, String>) {
         val key = data.key()
