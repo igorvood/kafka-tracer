@@ -7,4 +7,4 @@ import ru.vood.kafkatracer.request.meta.dto.TraceArrow
 data class ListenTopics(
     val topics: Set<TopicDto>,
     val traceArrows: Set<TraceArrow<GraphNodeDto, GraphNodeDto>>
-    )
+)

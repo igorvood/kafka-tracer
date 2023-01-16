@@ -16,6 +16,6 @@ data class UserRequestListen(
 data class GroupRequestListen(
     val traceArrows: Set<TraceArrow<GraphNodeDto, GraphNodeDto>>,
     val topicListeners: Map<TopicDto, TopicCacheValue>,
-){
+) {
     val topicWithMessage by lazy { topicListeners.map { it.key to it.value.lastKafkaMessage } }
 }

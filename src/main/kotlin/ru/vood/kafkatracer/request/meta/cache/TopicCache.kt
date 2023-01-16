@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service
 import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 import ru.vood.kafkatracer.request.meta.dto.TopicDto
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 @Service
 class TopicCache(
@@ -22,7 +21,7 @@ class TopicCache(
             val process: (KafkaData) -> Unit = { km ->
                 val get = messageKafkaMap.get()
                 logger.info("""last msg ${Date(km.timestamp)} topic ${topicName}, prev msg ${get?.timestamp}""")
-                messageKafkaMap.set( km)
+                messageKafkaMap.set(km)
 
             }
             process
@@ -50,7 +49,12 @@ class TopicCache(
             override fun load(topic: TopicDto): TopicCacheValue {
                 val atomicRef = AtomicRef<KafkaData?>(null)
                 val messageKafka = processKafkaMessage(topic.name, atomicRef)
-                    .let {saveMessageFunction ->  messageListenerContainer(topic.name, saveMessageFunction) { cnsFactory } }
+                    .let { saveMessageFunction ->
+                        messageListenerContainer(
+                            topic.name,
+                            saveMessageFunction
+                        ) { cnsFactory }
+                    }
 
                 return TopicCacheValue(messageKafka, atomicRef)
             }

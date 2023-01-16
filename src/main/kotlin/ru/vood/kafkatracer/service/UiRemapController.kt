@@ -1,9 +1,7 @@
 package ru.vood.kafkatracer.service
 
-import org.apache.kafka.common.header.Header
 import org.springframework.stereotype.Service
 import ru.vood.kafkatracer.request.meta.cache.RequestCache
-import ru.vood.kafkatracer.request.meta.cache.dto.Identity
 import ru.vood.kafkatracer.request.meta.cache.dto.RequestGraphDto
 import ru.vood.kafkatracer.request.meta.dto.*
 import java.util.*

@@ -17,7 +17,7 @@ class RequestCache(
 ) : AbstractCacheBuilder<RequestGraphDto, GroupRequestListen>() {
 
     override val removalListener: RemovalListener<RequestGraphDto, GroupRequestListen>
-        get() =  RemovalListener<RequestGraphDto, GroupRequestListen> { entity ->
+        get() = RemovalListener<RequestGraphDto, GroupRequestListen> { entity ->
             logger.info("=======delete group cache ${entity.key}")
         }
 

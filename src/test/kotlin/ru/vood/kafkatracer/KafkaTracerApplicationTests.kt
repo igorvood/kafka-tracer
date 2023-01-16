@@ -41,8 +41,9 @@ import java.util.concurrent.TimeUnit
 @ExtendWith(SpringExtension::class)
 @EmbeddedKafka(
     partitions = 1,
-    brokerProperties = [ "listeners=PLAINTEXT://localhost:9092", "port=9092" ],
-    topics = ["t1_from", "t1_To"])
+    brokerProperties = ["listeners=PLAINTEXT://localhost:9092", "port=9092"],
+    topics = ["t1_from", "t1_To"]
+)
 class KafkaTracerApplicationTests {
 
     @MockkBean(relaxed = true)
@@ -59,7 +60,6 @@ class KafkaTracerApplicationTests {
     lateinit var topicCache: TopicCache
 
 
-
     @Autowired
     lateinit var tracerRest: TracerRest
 
@@ -67,10 +67,8 @@ class KafkaTracerApplicationTests {
     lateinit var requestCache: RequestCache
 
 
-
     @Autowired
     lateinit var kafkaTemplate: KafkaTemplate<String, String>
-
 
 
     @Autowired
@@ -79,6 +77,7 @@ class KafkaTracerApplicationTests {
     init {
         MockKAnnotations.init(this, relaxUnitFun = true)
     }
+
     @Test
     fun contextLoads() {
         every { restTemplate.getForObject(any<String>(), String::class.java) } returns arrowsJsonStr
@@ -125,23 +124,21 @@ class KafkaTracerApplicationTests {
             }
 
         val okResult = result.filterIsInstance<Either.Right<Unit>>()
-        if (okResult.size!=result.size){
+        if (okResult.size != result.size) {
             val errorResult = result.filterIsInstance<Either.Left<Throwable>>()
             val joinToString = errorResult
                 .map { it.value.message }
                 .joinToString("\n")
 
 
-            Assertions.assertNull("Expected ${okResult.size} success, but ${errorResult.size} is error\n"+joinToString)
+            Assertions.assertNull("Expected ${okResult.size} success, but ${errorResult.size} is error\n" + joinToString)
         }
-
 
 
     }
 
 
-
-    companion object{
+    companion object {
         val t1FromName = "t1_from"
         val t1ToName = "t1_To"
 
@@ -151,11 +148,11 @@ class KafkaTracerApplicationTests {
         val t1To = ru.vood.kafkatracer.request.meta.dto.TopicDto(t1ToName)
 
         val arrows = arrayOf(
-            JsonArrow( t1From, flinkSrvDto),
-            JsonArrow(flinkSrvDto,  t1To),
+            JsonArrow(t1From, flinkSrvDto),
+            JsonArrow(flinkSrvDto, t1To),
         ).toSet()
 
-        val arrowsJsonStr = Json.encodeToString(SetSerializer(JsonArrow.serializer()),  arrows)
+        val arrowsJsonStr = Json.encodeToString(SetSerializer(JsonArrow.serializer()), arrows)
 
     }
 }

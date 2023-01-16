@@ -6,7 +6,7 @@ data class JsonArrow(
     val from: GraphNodeDto,
 
     val to: GraphNodeDto,
-    ) {
+) {
 
 
     @Deprecated("лишний класс TraceArrow")
