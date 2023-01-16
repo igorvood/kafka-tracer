@@ -24,7 +24,6 @@ class KafkaMessageListener(
 
         val pip = data.topic()
 
-
         val kafkaData = KafkaData(key, headers, timestamp, value, pip, identity)
 
         messageApplyFun(kafkaData)
