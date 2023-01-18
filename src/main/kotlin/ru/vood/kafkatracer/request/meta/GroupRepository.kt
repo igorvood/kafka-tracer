@@ -5,20 +5,19 @@ import kotlinx.serialization.json.Json
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import ru.vood.kafkatracer.appProps.ConfigurationServerUrl
+import ru.vood.kafkatracer.request.meta.dto.GroupServiceDto
 import ru.vood.kafkatracer.request.meta.dto.JsonArrow
 
-
 @Service
-class ArrowsRepository(
+class GroupRepository(
     cfgServerUrl: ConfigurationServerUrl,
     restTemplate: RestTemplate
 ) : AbstractRestRequest(cfgServerUrl, restTemplate) {
 
-    fun arrowsByTopic(groupId: String): Set<JsonArrow> {
+    fun trackingGroup(): Set<GroupServiceDto> {
 
-        return sendRestGet<String>("tracking/arrows/$groupId")
-            ?.let { Json.decodeFromString(SetSerializer(JsonArrow.serializer()), it) }
+        return sendRestGet<String>("tracking/group")
+            ?.let { Json.decodeFromString(SetSerializer(GroupServiceDto.serializer()), it) }
             ?.toSet() ?: setOf()
     }
-
 }

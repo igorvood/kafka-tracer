@@ -10,10 +10,10 @@ abstract class AbstractRestRequest(
     fun fullUrl(restEnd: String): String = "http://${cfgServerUrl.host}:${cfgServerUrl.port}/$restEnd"
 
 
-    protected inline fun <reified T> sendRestGet1(groupId: String): T? {
+    protected inline fun <reified T> sendRestGet(groupId: String): T? {
 
         return restTemplate.getForObject(
-            fullUrl("tracking/arrows/$groupId"),
+            fullUrl(groupId),
             T::class.java
         )
 
