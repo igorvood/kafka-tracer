@@ -23,7 +23,6 @@ class TopicCache(
                 val get = messageKafkaMap.get()
                 logger.info("""last msg ${Date(km.timestamp)} topic ${topicName}, prev msg ${get?.timestamp}""")
                 messageKafkaMap.set(km)
-
             }
             process
         }
