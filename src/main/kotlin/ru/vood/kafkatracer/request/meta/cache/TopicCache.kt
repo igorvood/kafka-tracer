@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Lookup
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.listener.AbstractMessageListenerContainer
 import org.springframework.stereotype.Service
+import ru.vood.kafkatracer.appProps.CacheProperty
 import ru.vood.kafkatracer.request.meta.cache.dto.KafkaData
 import ru.vood.kafkatracer.request.meta.cache.dto.TopicCacheValue
 import ru.vood.kafkatracer.request.meta.dto.TopicDto
@@ -15,7 +16,8 @@ import java.util.*
 @Service
 class TopicCache(
     val cnsFactory: ConsumerFactory<String, String>,
-) : AbstractCacheBuilder<TopicDto, TopicCacheValue>() {
+    cacheProperty: CacheProperty
+) : AbstractCacheBuilder<TopicDto, TopicCacheValue>(cacheProperty) {
 
     private val processKafkaMessage: (String, AtomicRef<KafkaData?>) -> ((KafkaData) -> Unit) =
         { topicName, messageKafkaMap ->

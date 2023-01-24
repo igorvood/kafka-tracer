@@ -2,6 +2,8 @@ configuration:
   server:
     host: localhost
     port: 9091
+    cache:
+      timeSafety: 10
 spring:
   profiles:
     active: local

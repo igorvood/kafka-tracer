@@ -3,6 +3,7 @@ package ru.vood.kafkatracer.request.meta.cache
 import com.google.common.cache.CacheLoader
 import com.google.common.cache.RemovalListener
 import org.springframework.stereotype.Service
+import ru.vood.kafkatracer.appProps.CacheProperty
 import ru.vood.kafkatracer.request.meta.ArrowsRepository
 import ru.vood.kafkatracer.request.meta.cache.dto.GroupRequestListen
 import ru.vood.kafkatracer.request.meta.cache.dto.ListenTopics
@@ -13,8 +14,9 @@ import ru.vood.kafkatracer.request.meta.dto.TopicDto
 @Service
 class RequestCache(
     private val req: ArrowsRepository,
-    private val topicCache: TopicCache
-) : AbstractCacheBuilder<RequestGraphDto, GroupRequestListen>() {
+    private val topicCache: TopicCache,
+    cacheProperty: CacheProperty
+) : AbstractCacheBuilder<RequestGraphDto, GroupRequestListen>(cacheProperty) {
 
     override val removalListener: RemovalListener<RequestGraphDto, GroupRequestListen>
         get() = RemovalListener<RequestGraphDto, GroupRequestListen> { entity ->
