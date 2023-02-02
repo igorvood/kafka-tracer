@@ -19,13 +19,12 @@ class KafkaMessageListener(
         val headers = data.headers().toArray()
         val timestamp = data.timestamp()
         val value = data.value()
-
-        val identity = customJson.decodeFromString(Identity.serializer(), value)
-
         val pip = data.topic()
 
-        val kafkaData = KafkaData(key, headers, timestamp, value, pip, identity)
-
+        val kafkaData =
+            kotlin.runCatching { customJson.decodeFromString(Identity.serializer(), value) }
+                .map {identity -> KafkaData(key, headers, timestamp, value, pip, identity) }
+                .getOrElse { KafkaData(key, headers, timestamp, value, pip, Identity(null, null)) }
         messageApplyFun(kafkaData)
     }
 }
