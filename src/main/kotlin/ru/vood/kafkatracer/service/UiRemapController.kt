@@ -32,7 +32,8 @@ class UiRemapController(
                 val dateStr = kafkaData?.let { Date(it.timestamp).toString() }
                 val id = kafkaData?.identity?.id
                 val uid = kafkaData?.identity?.uuid
-                UINode(node.index, node.value.name, node.value.typeNode, id, uid, dateStr)
+                val value = kafkaData?.value
+                UINode(node.index, node.value.name, node.value.typeNode,  value, id, uid, dateStr)
             }
 
         val arrows = arrs.withIndex()
